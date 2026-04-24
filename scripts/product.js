@@ -307,6 +307,14 @@ const getVariationDelta = () => {
     }, 0);
 };
 
+const getCurrentUnitPrice = () => {
+    if (!currentProduct) {
+        return 0;
+    }
+
+    return Math.max(0, currentProduct.price + getVariationDelta());
+};
+
 const updatePreviewTint = () => {
     if (!detailImageStage) {
         return;
@@ -323,7 +331,7 @@ const updatePriceDisplay = () => {
     }
 
     const variationDelta = getVariationDelta();
-    const unitPrice = Math.max(0, currentProduct.price + variationDelta);
+    const unitPrice = getCurrentUnitPrice();
     const totalPrice = unitPrice * currentQuantity;
 
     detailPrice.textContent = `${currencyFormatter.format(unitPrice)} per item`;
@@ -754,6 +762,7 @@ const setupAddToCart = () => {
 
         store.addItemToCart(currentProduct, {
             quantity: currentQuantity,
+            unitPrice: getCurrentUnitPrice(),
             size: selectedSize,
             color: selectedColor,
             material: selectedMaterial
@@ -838,7 +847,9 @@ const loadProductDetails = async () => {
     }
 };
 
-if (store?.updateCartBadge) {
+if (store?.bindCartBadge) {
+    store.bindCartBadge(document);
+} else if (store?.updateCartBadge) {
     store.updateCartBadge(document);
 }
 

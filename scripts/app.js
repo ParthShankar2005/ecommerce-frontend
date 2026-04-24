@@ -405,7 +405,9 @@ const setupCartButtons = () => {
     });
 };
 
-if (store?.updateCartBadge) {
+if (store?.bindCartBadge) {
+    store.bindCartBadge(document);
+} else if (store?.updateCartBadge) {
     store.updateCartBadge(document);
 }
 

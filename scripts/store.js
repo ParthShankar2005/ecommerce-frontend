@@ -3,6 +3,7 @@
 
     const CART_STORAGE_KEY = "ecocart_cart";
     const CATALOG_CACHE_KEY = "ecocart_catalog_cache";
+    const CART_UPDATED_EVENT = "ecocart:cart-updated";
 
     const safeParseJson = (value, fallbackValue) => {
         try {
@@ -32,6 +33,16 @@
             return true;
         } catch (error) {
             return false;
+        }
+    };
+
+    const emitCartUpdated = () => {
+        try {
+            window.dispatchEvent(new CustomEvent(CART_UPDATED_EVENT, {
+                detail: { count: getCartCount() }
+            }));
+        } catch (error) {
+            // Ignore event dispatch failures in unsupported environments.
         }
     };
 
@@ -78,12 +89,45 @@
 
     const readCart = () => {
         const cartItems = safeReadStorage(CART_STORAGE_KEY, []);
-        return Array.isArray(cartItems) ? cartItems : [];
+
+        if (!Array.isArray(cartItems)) {
+            return [];
+        }
+
+        return cartItems
+            .map((item) => {
+                if (!item || typeof item !== "object") {
+                    return null;
+                }
+
+                const id = item.id;
+                const title = String(item.title ?? "").trim();
+                const image = String(item.image ?? "").trim();
+                const price = Number(item.price);
+                const quantity = Math.max(1, Number.parseInt(item.quantity ?? 1, 10) || 1);
+
+                if (!String(id).trim() || !title || !image || !Number.isFinite(price)) {
+                    return null;
+                }
+
+                return {
+                    id,
+                    title,
+                    image,
+                    price,
+                    quantity,
+                    selectedSize: String(item.selectedSize ?? "").trim(),
+                    selectedColor: String(item.selectedColor ?? "").trim(),
+                    selectedMaterial: String(item.selectedMaterial ?? "").trim()
+                };
+            })
+            .filter(Boolean);
     };
 
     const writeCart = (cartItems) => {
         const normalizedItems = Array.isArray(cartItems) ? cartItems : [];
         safeWriteStorage(CART_STORAGE_KEY, normalizedItems);
+        emitCartUpdated();
     };
 
     const getCartCount = () => {
@@ -101,6 +145,10 @@
         }
 
         const quantity = Math.max(1, Number.parseInt(options.quantity ?? 1, 10) || 1);
+        const unitPrice = Number(options.unitPrice);
+        const resolvedPrice = Number.isFinite(unitPrice)
+            ? Math.max(0, unitPrice)
+            : normalizedProduct.price;
         const selectedSize = String(options.size ?? "").trim();
         const selectedColor = String(options.color ?? "").trim();
         const selectedMaterial = String(options.material ?? "").trim();
@@ -120,11 +168,12 @@
                 1,
                 Number.parseInt(existingItem.quantity ?? 1, 10) + quantity
             );
+            existingItem.price = resolvedPrice;
         } else {
             cartItems.push({
                 id: normalizedProduct.id,
                 title: normalizedProduct.title,
-                price: normalizedProduct.price,
+                price: resolvedPrice,
                 image: normalizedProduct.image,
                 quantity,
                 selectedSize,
@@ -135,6 +184,46 @@
 
         writeCart(cartItems);
         return getCartCount();
+    };
+
+    const findCartItemIndex = (items, target = {}) => {
+        return items.findIndex((item) => {
+            return (
+                String(item.id) === String(target.id) &&
+                String(item.selectedSize ?? "") === String(target.size ?? "").trim() &&
+                String(item.selectedColor ?? "") === String(target.color ?? "").trim() &&
+                String(item.selectedMaterial ?? "") === String(target.material ?? "").trim()
+            );
+        });
+    };
+
+    const setItemQuantity = (target, quantity) => {
+        const cartItems = readCart();
+        const itemIndex = findCartItemIndex(cartItems, target);
+
+        if (itemIndex < 0) {
+            return getCartCount();
+        }
+
+        const nextQuantity = Number.parseInt(quantity, 10);
+
+        if (!Number.isFinite(nextQuantity) || nextQuantity <= 0) {
+            cartItems.splice(itemIndex, 1);
+        } else {
+            cartItems[itemIndex].quantity = Math.max(1, nextQuantity);
+        }
+
+        writeCart(cartItems);
+        return getCartCount();
+    };
+
+    const removeItemFromCart = (target) => {
+        return setItemQuantity(target, 0);
+    };
+
+    const clearCart = () => {
+        writeCart([]);
+        return 0;
     };
 
     const updateCartBadge = (root = document) => {
@@ -184,13 +273,35 @@
         return readCatalogCache().find((product) => String(product.id) === String(id)) ?? null;
     };
 
+    const bindCartBadge = (root = document) => {
+        const refresh = () => updateCartBadge(root);
+        const onStorage = (event) => {
+            if (!event || event.key === CART_STORAGE_KEY) {
+                refresh();
+            }
+        };
+
+        refresh();
+        window.addEventListener("storage", onStorage);
+        window.addEventListener(CART_UPDATED_EVENT, refresh);
+
+        return () => {
+            window.removeEventListener("storage", onStorage);
+            window.removeEventListener(CART_UPDATED_EVENT, refresh);
+        };
+    };
+
     window.EcoCartStore = {
         normalizeProduct,
         readCart,
         writeCart,
         getCartCount,
         addItemToCart,
+        setItemQuantity,
+        removeItemFromCart,
+        clearCart,
         updateCartBadge,
+        bindCartBadge,
         saveCatalogCache,
         readCatalogCache,
         findCachedProductById
