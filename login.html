@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Cart | EcoCart</title>
+    <title>Login | EcoCart</title>
     <link rel="stylesheet" href="styles/main.css">
 </head>
 <body>
@@ -20,14 +20,14 @@
                     <li><a href="index.html#products">Products</a></li>
                     <li><a href="index.html#about">About</a></li>
                     <li><a href="index.html#contact">Contact</a></li>
-                    <li><a href="login.html">Login</a></li>
+                    <li><a href="login.html" aria-current="page">Login</a></li>
                     <li><a href="signup.html">Sign Up</a></li>
-                    <li><a href="cart.html" aria-current="page">Cart</a></li>
+                    <li><a href="cart.html">Cart</a></li>
                 </ul>
             </nav>
 
             <div class="header-actions">
-                <form class="search-form" role="search" id="cart-search-form">
+                <form class="search-form" role="search" id="auth-search-form">
                     <label class="sr-only" for="product-search">Search products</label>
                     <input
                         id="product-search"
@@ -60,57 +60,53 @@
         </div>
     </header>
 
-    <main class="cart-page">
-        <section class="cart-shell">
-            <div class="cart-heading">
-                <h1>Your Shopping Cart</h1>
-                <p>Review your selected items, update quantities, or remove products before checkout.</p>
-            </div>
+    <main class="auth-page">
+        <section class="auth-shell" aria-labelledby="login-title">
+            <article class="auth-card">
+                <h1 class="auth-title" id="login-title">Welcome back</h1>
+                <p class="auth-subtitle">Sign in to manage your orders, cart, and saved products.</p>
 
-            <div class="cart-layout">
-                <section class="cart-panel" aria-labelledby="cart-items-title">
-                    <h2 id="cart-items-title">Items</h2>
-
-                    <div class="cart-empty" id="cart-empty" hidden>
-                        <p>Your cart is currently empty.</p>
-                        <a class="ghost-btn" href="index.html#products">Continue Shopping</a>
+                <form class="auth-form" id="login-form" novalidate>
+                    <div class="form-row">
+                        <label class="field-label" for="login-email">Email</label>
+                        <input class="auth-input" id="login-email" name="email" type="email" autocomplete="email" required>
+                        <p class="field-error" id="login-email-error"></p>
                     </div>
 
-                    <ul class="cart-items" id="cart-items" aria-live="polite"></ul>
-                </section>
-
-                <aside class="cart-summary" aria-labelledby="summary-title">
-                    <h2 id="summary-title">Order Summary</h2>
-
-                    <dl class="summary-lines">
-                        <div>
-                            <dt>Items</dt>
-                            <dd id="summary-items">0</dd>
+                    <div class="form-row">
+                        <label class="field-label" for="login-password">Password</label>
+                        <div class="input-wrap">
+                            <input
+                                class="auth-input"
+                                id="login-password"
+                                name="password"
+                                type="password"
+                                autocomplete="current-password"
+                                minlength="8"
+                                required
+                            >
+                            <button
+                                class="password-toggle"
+                                type="button"
+                                data-target="login-password"
+                                aria-label="Show password"
+                            >
+                                Show
+                            </button>
                         </div>
-                        <div>
-                            <dt>Subtotal</dt>
-                            <dd id="summary-subtotal">$0.00</dd>
-                        </div>
-                        <div>
-                            <dt>Estimated Tax</dt>
-                            <dd id="summary-tax">$0.00</dd>
-                        </div>
-                        <div class="summary-total">
-                            <dt>Total</dt>
-                            <dd id="summary-total">$0.00</dd>
-                        </div>
-                    </dl>
-
-                    <p class="cart-feedback" id="cart-feedback" role="status" aria-live="polite"></p>
-
-                    <div class="summary-actions">
-                        <a class="ghost-btn" href="index.html#products">Continue Shopping</a>
-                        <button class="primary-btn" id="proceed-checkout" type="button" disabled>
-                            Proceed to Checkout
-                        </button>
+                        <p class="field-error" id="login-password-error"></p>
                     </div>
-                </aside>
-            </div>
+
+                    <div class="auth-row">
+                        <a class="forgot-link" id="forgot-password-link" href="#">Forgot Password?</a>
+                    </div>
+
+                    <button class="primary-btn auth-submit" type="submit">Login</button>
+
+                    <p class="auth-feedback" id="auth-feedback" role="status" aria-live="polite"></p>
+                    <p class="auth-alt">New here? <a class="auth-link" href="signup.html">Create an account</a></p>
+                </form>
+            </article>
         </section>
     </main>
 
@@ -124,6 +120,6 @@
     <script src="scripts/firebase-auth.js"></script>
     <script src="scripts/store.js"></script>
     <script src="scripts/auth-ui.js"></script>
-    <script src="scripts/cart.js"></script>
+    <script src="scripts/auth.js"></script>
 </body>
 </html>
