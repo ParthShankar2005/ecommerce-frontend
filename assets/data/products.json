@@ -3,48 +3,104 @@
     "id": 201,
     "title": "Matte Ceramic Coffee Mug",
     "price": 24,
-    "image": "https://picsum.photos/seed/ecocart-mug/480/480"
+    "description": "Hand-finished ceramic mug with a soft matte glaze and heat-safe handle.",
+    "category": "Home",
+    "image": "https://picsum.photos/seed/ecocart-mug-main/480/480",
+    "images": [
+      "https://picsum.photos/seed/ecocart-mug-main/900/900",
+      "https://picsum.photos/seed/ecocart-mug-angle/900/900",
+      "https://picsum.photos/seed/ecocart-mug-lifestyle/900/900"
+    ]
   },
   {
     "id": 202,
     "title": "Compact Wireless Keyboard",
     "price": 59,
-    "image": "https://picsum.photos/seed/ecocart-keyboard/480/480"
+    "description": "Slim Bluetooth keyboard with tactile keys and long battery life.",
+    "category": "Electronics",
+    "image": "https://picsum.photos/seed/ecocart-keyboard-main/480/480",
+    "images": [
+      "https://picsum.photos/seed/ecocart-keyboard-main/900/900",
+      "https://picsum.photos/seed/ecocart-keyboard-keys/900/900",
+      "https://picsum.photos/seed/ecocart-keyboard-desk/900/900"
+    ]
   },
   {
     "id": 203,
     "title": "Everyday Canvas Sneakers",
     "price": 74,
-    "image": "https://picsum.photos/seed/ecocart-sneakers/480/480"
+    "description": "Breathable low-top sneakers built for daily comfort and clean styling.",
+    "category": "Fashion",
+    "image": "https://picsum.photos/seed/ecocart-sneakers-main/480/480",
+    "images": [
+      "https://picsum.photos/seed/ecocart-sneakers-main/900/900",
+      "https://picsum.photos/seed/ecocart-sneakers-side/900/900",
+      "https://picsum.photos/seed/ecocart-sneakers-wear/900/900"
+    ]
   },
   {
     "id": 204,
     "title": "Modern Table Lamp",
     "price": 49,
-    "image": "https://picsum.photos/seed/ecocart-tablelamp/480/480"
+    "description": "Minimal table lamp with warm LED glow and matte metal stem.",
+    "category": "Home",
+    "image": "https://picsum.photos/seed/ecocart-tablelamp-main/480/480",
+    "images": [
+      "https://picsum.photos/seed/ecocart-tablelamp-main/900/900",
+      "https://picsum.photos/seed/ecocart-tablelamp-night/900/900",
+      "https://picsum.photos/seed/ecocart-tablelamp-detail/900/900"
+    ]
   },
   {
     "id": 205,
     "title": "Smart Water Bottle",
     "price": 36,
-    "image": "https://picsum.photos/seed/ecocart-bottle/480/480"
+    "description": "Insulated bottle with hydration reminders and leak-proof lock cap.",
+    "category": "Lifestyle",
+    "image": "https://picsum.photos/seed/ecocart-bottle-main/480/480",
+    "images": [
+      "https://picsum.photos/seed/ecocart-bottle-main/900/900",
+      "https://picsum.photos/seed/ecocart-bottle-cap/900/900",
+      "https://picsum.photos/seed/ecocart-bottle-outdoor/900/900"
+    ]
   },
   {
     "id": 206,
     "title": "Ultra-Soft Throw Blanket",
     "price": 42,
-    "image": "https://picsum.photos/seed/ecocart-blanket/480/480"
+    "description": "Cozy microfiber blanket with breathable weave for all-season use.",
+    "category": "Home",
+    "image": "https://picsum.photos/seed/ecocart-blanket-main/480/480",
+    "images": [
+      "https://picsum.photos/seed/ecocart-blanket-main/900/900",
+      "https://picsum.photos/seed/ecocart-blanket-folded/900/900",
+      "https://picsum.photos/seed/ecocart-blanket-sofa/900/900"
+    ]
   },
   {
     "id": 207,
     "title": "Portable SSD 1TB",
     "price": 119,
-    "image": "https://picsum.photos/seed/ecocart-ssd/480/480"
+    "description": "Pocket-sized USB-C SSD with high-speed transfer and aluminum shell.",
+    "category": "Electronics",
+    "image": "https://picsum.photos/seed/ecocart-ssd-main/480/480",
+    "images": [
+      "https://picsum.photos/seed/ecocart-ssd-main/900/900",
+      "https://picsum.photos/seed/ecocart-ssd-port/900/900",
+      "https://picsum.photos/seed/ecocart-ssd-laptop/900/900"
+    ]
   },
   {
     "id": 208,
     "title": "Foldable Travel Duffel",
     "price": 66,
-    "image": "https://picsum.photos/seed/ecocart-duffel/480/480"
+    "description": "Water-resistant duffel bag with fold-flat design and shoe compartment.",
+    "category": "Travel",
+    "image": "https://picsum.photos/seed/ecocart-duffel-main/480/480",
+    "images": [
+      "https://picsum.photos/seed/ecocart-duffel-main/900/900",
+      "https://picsum.photos/seed/ecocart-duffel-open/900/900",
+      "https://picsum.photos/seed/ecocart-duffel-airport/900/900"
+    ]
   }
 ]

@@ -2,59 +2,115 @@ const menuToggle = document.getElementById("menu-toggle");
 const navMenu = document.getElementById("primary-nav");
 const productGrid = document.getElementById("product-grid");
 const productsStatus = document.getElementById("products-status");
-const cartButton = document.querySelector(".cart-button");
-const cartCountElement = document.querySelector(".cart-count");
 const productSearch = document.getElementById("product-search");
 
 const PRODUCT_API_URL = "https://fakestoreapi.com/products?limit=8";
+const store = window.EcoCartStore;
+
 const FALLBACK_PRODUCTS = [
     {
         id: "local-1",
         title: "Wireless Noise-Canceling Headphones",
         price: 129.0,
-        image: "https://picsum.photos/seed/ecocart-headphones/480/480"
+        description: "Studio-inspired over-ear headphones with adaptive noise control.",
+        category: "Electronics",
+        image: "https://picsum.photos/seed/ecocart-headphones-main/480/480",
+        images: [
+            "https://picsum.photos/seed/ecocart-headphones-main/900/900",
+            "https://picsum.photos/seed/ecocart-headphones-side/900/900",
+            "https://picsum.photos/seed/ecocart-headphones-lifestyle/900/900"
+        ]
     },
     {
         id: "local-2",
         title: "Smart Fitness Watch",
         price: 89.0,
-        image: "https://picsum.photos/seed/ecocart-watch/480/480"
+        description: "Track workouts, sleep, and heart rate with a bright AMOLED display.",
+        category: "Electronics",
+        image: "https://picsum.photos/seed/ecocart-watch-main/480/480",
+        images: [
+            "https://picsum.photos/seed/ecocart-watch-main/900/900",
+            "https://picsum.photos/seed/ecocart-watch-angle/900/900",
+            "https://picsum.photos/seed/ecocart-watch-run/900/900"
+        ]
     },
     {
         id: "local-3",
         title: "Minimalist Travel Backpack",
         price: 64.0,
-        image: "https://picsum.photos/seed/ecocart-backpack/480/480"
+        description: "Weather-ready backpack with padded laptop sleeve and hidden pockets.",
+        category: "Travel",
+        image: "https://picsum.photos/seed/ecocart-backpack-main/480/480",
+        images: [
+            "https://picsum.photos/seed/ecocart-backpack-main/900/900",
+            "https://picsum.photos/seed/ecocart-backpack-open/900/900",
+            "https://picsum.photos/seed/ecocart-backpack-outdoor/900/900"
+        ]
     },
     {
         id: "local-4",
         title: "Portable Bluetooth Speaker",
         price: 72.0,
-        image: "https://picsum.photos/seed/ecocart-speaker/480/480"
+        description: "Compact speaker with rich bass, splash protection, and 14-hour battery.",
+        category: "Electronics",
+        image: "https://picsum.photos/seed/ecocart-speaker-main/480/480",
+        images: [
+            "https://picsum.photos/seed/ecocart-speaker-main/900/900",
+            "https://picsum.photos/seed/ecocart-speaker-buttons/900/900",
+            "https://picsum.photos/seed/ecocart-speaker-outdoor/900/900"
+        ]
     },
     {
         id: "local-5",
         title: "Ceramic Pour-Over Coffee Set",
         price: 39.0,
-        image: "https://picsum.photos/seed/ecocart-coffee/480/480"
+        description: "Elegant brewing set including dripper, server, and filter papers.",
+        category: "Home",
+        image: "https://picsum.photos/seed/ecocart-coffee-main/480/480",
+        images: [
+            "https://picsum.photos/seed/ecocart-coffee-main/900/900",
+            "https://picsum.photos/seed/ecocart-coffee-close/900/900",
+            "https://picsum.photos/seed/ecocart-coffee-brew/900/900"
+        ]
     },
     {
         id: "local-6",
         title: "Lightweight Running Shoes",
         price: 95.0,
-        image: "https://picsum.photos/seed/ecocart-shoes/480/480"
+        description: "Responsive cushioning and breathable knit upper for everyday runs.",
+        category: "Fashion",
+        image: "https://picsum.photos/seed/ecocart-shoes-main/480/480",
+        images: [
+            "https://picsum.photos/seed/ecocart-shoes-main/900/900",
+            "https://picsum.photos/seed/ecocart-shoes-side/900/900",
+            "https://picsum.photos/seed/ecocart-shoes-track/900/900"
+        ]
     },
     {
         id: "local-7",
         title: "Organic Cotton Hoodie",
         price: 54.0,
-        image: "https://picsum.photos/seed/ecocart-hoodie/480/480"
+        description: "Relaxed-fit hoodie made from organic brushed cotton fleece.",
+        category: "Fashion",
+        image: "https://picsum.photos/seed/ecocart-hoodie-main/480/480",
+        images: [
+            "https://picsum.photos/seed/ecocart-hoodie-main/900/900",
+            "https://picsum.photos/seed/ecocart-hoodie-back/900/900",
+            "https://picsum.photos/seed/ecocart-hoodie-street/900/900"
+        ]
     },
     {
         id: "local-8",
         title: "Glass Desk Lamp",
         price: 47.0,
-        image: "https://picsum.photos/seed/ecocart-lamp/480/480"
+        description: "Space-saving lamp with warm glow and touch dimmer controls.",
+        category: "Home",
+        image: "https://picsum.photos/seed/ecocart-lamp-main/480/480",
+        images: [
+            "https://picsum.photos/seed/ecocart-lamp-main/900/900",
+            "https://picsum.photos/seed/ecocart-lamp-glass/900/900",
+            "https://picsum.photos/seed/ecocart-lamp-desk/900/900"
+        ]
     }
 ];
 
@@ -64,35 +120,12 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
 });
 
 let allProducts = [];
-let cartCount = Number.parseInt(cartCountElement?.textContent ?? "0", 10);
 
-if (Number.isNaN(cartCount)) {
-    cartCount = 0;
-}
-
-const updateCartCount = (nextCount) => {
-    cartCount = Math.max(0, nextCount);
-
-    if (cartCountElement) {
-        cartCountElement.textContent = String(cartCount);
+const normalizeProduct = (rawProduct, index) => {
+    if (store?.normalizeProduct) {
+        return store.normalizeProduct(rawProduct, index);
     }
 
-    if (cartButton) {
-        const itemText = cartCount === 1 ? "item" : "items";
-        cartButton.setAttribute("aria-label", `Shopping cart with ${cartCount} ${itemText}`);
-    }
-};
-
-const setProductsStatus = (message, isError = false) => {
-    if (!productsStatus) {
-        return;
-    }
-
-    productsStatus.textContent = message;
-    productsStatus.classList.toggle("error", isError);
-};
-
-const toProductModel = (rawProduct, index) => {
     if (!rawProduct) {
         return null;
     }
@@ -110,14 +143,33 @@ const toProductModel = (rawProduct, index) => {
         id,
         title,
         price,
-        image
+        image,
+        description: String(rawProduct.description ?? ""),
+        category: String(rawProduct.category ?? "General"),
+        images: Array.isArray(rawProduct.images) && rawProduct.images.length
+            ? rawProduct.images
+            : [image]
     };
+};
+
+const setProductsStatus = (message, isError = false) => {
+    if (!productsStatus) {
+        return;
+    }
+
+    productsStatus.textContent = message;
+    productsStatus.classList.toggle("error", isError);
 };
 
 const createProductCard = (product) => {
     const card = document.createElement("article");
     card.className = "product-card";
     card.dataset.productId = String(product.id);
+
+    const productLink = document.createElement("a");
+    productLink.className = "product-link";
+    productLink.href = `product.html?id=${encodeURIComponent(String(product.id))}`;
+    productLink.setAttribute("aria-label", `View details for ${product.title}`);
 
     const media = document.createElement("figure");
     media.className = "product-media";
@@ -148,13 +200,14 @@ const createProductCard = (product) => {
     addToCartButton.textContent = "Add to Cart";
     addToCartButton.setAttribute("aria-label", `Add ${product.title} to cart`);
 
+    productLink.append(media, title);
     meta.append(price, addToCartButton);
-    card.append(media, title, meta);
+    card.append(productLink, meta);
 
     return card;
 };
 
-const renderProducts = (products, statusMessage) => {
+const renderProducts = (products, statusMessage, isError = false) => {
     if (!productGrid) {
         return;
     }
@@ -173,7 +226,7 @@ const renderProducts = (products, statusMessage) => {
     });
 
     productGrid.appendChild(fragment);
-    setProductsStatus(statusMessage ?? `Showing ${products.length} products.`);
+    setProductsStatus(statusMessage ?? `Showing ${products.length} products.`, isError);
 };
 
 const getProductsFromApi = async () => {
@@ -185,7 +238,7 @@ const getProductsFromApi = async () => {
 
     const payload = await response.json();
     const products = payload
-        .map((item, index) => toProductModel(item, index))
+        .map((item, index) => normalizeProduct(item, index))
         .filter(Boolean);
 
     if (!products.length) {
@@ -204,7 +257,7 @@ const getProductsFromLocalJson = async () => {
 
     const payload = await response.json();
     const products = payload
-        .map((item, index) => toProductModel(item, index))
+        .map((item, index) => normalizeProduct(item, index))
         .filter(Boolean);
 
     if (!products.length) {
@@ -218,7 +271,7 @@ const applySearchFilter = () => {
     const query = String(productSearch?.value ?? "").trim().toLowerCase();
 
     if (!query) {
-        renderProducts(allProducts);
+        renderProducts(allProducts, `Showing ${allProducts.length} products.`);
         return;
     }
 
@@ -230,7 +283,8 @@ const applySearchFilter = () => {
         filteredProducts,
         filteredProducts.length
             ? `Showing ${filteredProducts.length} result(s) for "${query}".`
-            : `No products found for "${query}".`
+            : `No products found for "${query}".`,
+        !filteredProducts.length
     );
 };
 
@@ -249,17 +303,30 @@ const initializeProductGrid = async () => {
             allProducts = await getProductsFromLocalJson();
             renderProducts(allProducts, "Products loaded from local catalog.");
         } catch (localJsonError) {
-            allProducts = FALLBACK_PRODUCTS;
+            allProducts = FALLBACK_PRODUCTS
+                .map((product, index) => normalizeProduct(product, index))
+                .filter(Boolean);
             renderProducts(allProducts, "Using fallback products due to a loading issue.");
         }
     }
 
-    if (productSearch) {
-        productSearch.addEventListener("input", applySearchFilter);
+    if (store?.saveCatalogCache) {
+        store.saveCatalogCache(allProducts);
+    }
+
+    const queryParam = new URLSearchParams(window.location.search).get("q");
+
+    if (queryParam && productSearch) {
+        productSearch.value = queryParam;
+        applySearchFilter();
     }
 };
 
-if (menuToggle && navMenu) {
+const setupMobileNavigation = () => {
+    if (!menuToggle || !navMenu) {
+        return;
+    }
+
     const closeMenu = () => {
         navMenu.classList.remove("is-open");
         menuToggle.setAttribute("aria-expanded", "false");
@@ -283,9 +350,30 @@ if (menuToggle && navMenu) {
             closeMenu();
         }
     });
-}
+};
 
-if (productGrid) {
+const setupSearchInput = () => {
+    if (!productSearch) {
+        return;
+    }
+
+    productSearch.addEventListener("input", applySearchFilter);
+
+    const searchForm = productSearch.closest("form");
+
+    if (searchForm) {
+        searchForm.addEventListener("submit", (event) => {
+            event.preventDefault();
+            applySearchFilter();
+        });
+    }
+};
+
+const setupCartButtons = () => {
+    if (!productGrid) {
+        return;
+    }
+
     productGrid.addEventListener("click", (event) => {
         const addToCartButton = event.target.closest(".add-cart");
 
@@ -293,9 +381,20 @@ if (productGrid) {
             return;
         }
 
-        updateCartCount(cartCount + 1);
-        const originalLabel = addToCartButton.textContent;
+        const card = addToCartButton.closest(".product-card");
+        const productId = card?.dataset.productId;
+        const selectedProduct = allProducts.find(
+            (product) => String(product.id) === String(productId)
+        );
 
+        if (!selectedProduct || !store?.addItemToCart) {
+            return;
+        }
+
+        store.addItemToCart(selectedProduct, { quantity: 1 });
+        store.updateCartBadge(document);
+
+        const originalLabel = addToCartButton.textContent;
         addToCartButton.textContent = "Added";
         addToCartButton.disabled = true;
 
@@ -304,9 +403,15 @@ if (productGrid) {
             addToCartButton.disabled = false;
         }, 800);
     });
+};
+
+if (store?.updateCartBadge) {
+    store.updateCartBadge(document);
 }
 
-updateCartCount(cartCount);
+setupMobileNavigation();
+setupSearchInput();
+setupCartButtons();
 initializeProductGrid();
 
 console.log("E-Commerce Website Loaded");
