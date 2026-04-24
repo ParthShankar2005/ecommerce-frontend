@@ -7,9 +7,93 @@
     <link rel="stylesheet" href="styles/main.css">
 </head>
 <body>
-    <header>
-        <h1>Welcome to Our Online Store</h1>
+    <header class="site-header">
+        <div class="header-inner">
+            <a class="brand" href="#home" aria-label="EcoCart home">
+                <span class="brand-mark" aria-hidden="true">EC</span>
+                <span class="brand-text">EcoCart</span>
+            </a>
+
+            <nav class="nav-menu" id="primary-nav" aria-label="Primary navigation">
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#products">Products</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-actions">
+                <form class="search-form" role="search">
+                    <label class="sr-only" for="product-search">Search products</label>
+                    <input
+                        id="product-search"
+                        type="search"
+                        placeholder="Search products..."
+                        aria-label="Search products"
+                    >
+                </form>
+
+                <button class="cart-button" type="button" aria-label="Shopping cart with 2 items">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M7 4h-2l-1 2v1h2l2.6 8.1c.1.5.6.9 1.1.9h8.8v-2h-8.1l-.4-1.2h8.7c.5 0 1-.3 1.1-.8l1.6-5.5h-11.8l-.4-1.5zm3.4 14.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm7 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z"/>
+                    </svg>
+                    <span class="cart-count">2</span>
+                </button>
+
+                <button
+                    class="menu-toggle"
+                    id="menu-toggle"
+                    type="button"
+                    aria-label="Toggle navigation menu"
+                    aria-controls="primary-nav"
+                    aria-expanded="false"
+                >
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
     </header>
+
+    <main>
+        <section class="hero" id="home">
+            <div class="hero-content">
+                <p class="hero-kicker">Seasonal Drop 2026</p>
+                <h1>Biggest Sale of the Year. Up to 50% Off Essentials.</h1>
+                <p class="hero-subtext">
+                    Refresh your setup with curated tech, fashion, and home picks.
+                    Limited-time prices end this weekend.
+                </p>
+                <a class="hero-cta" href="#products">Shop Best Sellers</a>
+            </div>
+
+            <div class="hero-visual" aria-hidden="true">
+                <div class="hero-card">
+                    <p>Flash Bundle</p>
+                    <h2>Headphones + Smartwatch</h2>
+                    <span>Starting at $129</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="products-preview" id="products">
+            <h2>Trending Products</h2>
+            <p>Explore handpicked deals across electronics, lifestyle, and fashion.</p>
+        </section>
+
+        <section class="info-section" id="about">
+            <h2>About Us</h2>
+            <p>We build shopping experiences focused on quality, speed, and value.</p>
+        </section>
+
+        <section class="info-section" id="contact">
+            <h2>Contact</h2>
+            <p>Need help with an order? Reach us at support@ecocart.example.</p>
+        </section>
+    </main>
+
     <script src="scripts/app.js"></script>
 </body>
 </html>
