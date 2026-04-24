@@ -93,44 +93,75 @@ const createCartItemElement = (item) => {
     row.dataset.material = item.selectedMaterial ?? "";
     row.dataset.quantity = String(quantity);
 
-    row.innerHTML = `
-        <div class="cart-item-media">
-            <img width="280" height="280">
-        </div>
-        <div class="cart-item-info">
-            <h3>${item.title}</h3>
-            <p class="cart-item-options">${buildOptionLabel(item)}</p>
-            <p class="cart-item-price">${formatCurrency(item.price)} each</p>
-        </div>
-        <div class="cart-item-controls">
-            <div class="cart-qty" aria-label="Change quantity">
-                <button
-                    class="cart-qty-btn"
-                    type="button"
-                    data-action="decrease"
-                    aria-label="Decrease quantity"
-                    ${quantity <= 1 ? "disabled" : ""}
-                >
-                    -
-                </button>
-                <input class="cart-qty-input" type="text" value="${quantity}" aria-label="Quantity" readonly>
-                <button
-                    class="cart-qty-btn"
-                    type="button"
-                    data-action="increase"
-                    aria-label="Increase quantity"
-                    ${quantity >= MAX_QTY ? "disabled" : ""}
-                >
-                    +
-                </button>
-            </div>
-            <p class="cart-line-total">${formatCurrency(lineTotal)}</p>
-            <button class="cart-remove" type="button" data-action="remove">Remove</button>
-        </div>
-    `;
+    const media = document.createElement("div");
+    media.className = "cart-item-media";
 
-    const cartImage = row.querySelector(".cart-item-media img");
+    const cartImage = document.createElement("img");
+    cartImage.width = 280;
+    cartImage.height = 280;
+    media.appendChild(cartImage);
     applyCartItemImage(cartImage, item);
+
+    const info = document.createElement("div");
+    info.className = "cart-item-info";
+
+    const title = document.createElement("h3");
+    title.textContent = String(item.title ?? "");
+
+    const options = document.createElement("p");
+    options.className = "cart-item-options";
+    options.textContent = buildOptionLabel(item);
+
+    const price = document.createElement("p");
+    price.className = "cart-item-price";
+    price.textContent = `${formatCurrency(item.price)} each`;
+
+    info.append(title, options, price);
+
+    const controls = document.createElement("div");
+    controls.className = "cart-item-controls";
+
+    const quantityWrap = document.createElement("div");
+    quantityWrap.className = "cart-qty";
+    quantityWrap.setAttribute("aria-label", "Change quantity");
+
+    const decreaseButton = document.createElement("button");
+    decreaseButton.className = "cart-qty-btn";
+    decreaseButton.type = "button";
+    decreaseButton.dataset.action = "decrease";
+    decreaseButton.setAttribute("aria-label", "Decrease quantity");
+    decreaseButton.textContent = "-";
+    decreaseButton.disabled = quantity <= 1;
+
+    const quantityInput = document.createElement("input");
+    quantityInput.className = "cart-qty-input";
+    quantityInput.type = "text";
+    quantityInput.value = String(quantity);
+    quantityInput.setAttribute("aria-label", "Quantity");
+    quantityInput.readOnly = true;
+
+    const increaseButton = document.createElement("button");
+    increaseButton.className = "cart-qty-btn";
+    increaseButton.type = "button";
+    increaseButton.dataset.action = "increase";
+    increaseButton.setAttribute("aria-label", "Increase quantity");
+    increaseButton.textContent = "+";
+    increaseButton.disabled = quantity >= MAX_QTY;
+
+    quantityWrap.append(decreaseButton, quantityInput, increaseButton);
+
+    const lineTotalNode = document.createElement("p");
+    lineTotalNode.className = "cart-line-total";
+    lineTotalNode.textContent = formatCurrency(lineTotal);
+
+    const removeButton = document.createElement("button");
+    removeButton.className = "cart-remove";
+    removeButton.type = "button";
+    removeButton.dataset.action = "remove";
+    removeButton.textContent = "Remove";
+
+    controls.append(quantityWrap, lineTotalNode, removeButton);
+    row.append(media, info, controls);
 
     return row;
 };

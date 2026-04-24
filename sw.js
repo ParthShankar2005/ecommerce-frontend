@@ -1,36 +1,53 @@
-const STATIC_CACHE = "ecocart-static-v1";
-const RUNTIME_CACHE = "ecocart-runtime-v1";
+const STATIC_CACHE = "ecocart-static-v2";
+const RUNTIME_CACHE = "ecocart-runtime-v2";
+const SCOPE_URL = new URL(self.registration.scope);
+const SCOPE_PATH = SCOPE_URL.pathname.endsWith("/")
+    ? SCOPE_URL.pathname
+    : `${SCOPE_URL.pathname}/`;
 
 const STATIC_ASSETS = [
-    "/",
-    "/index.html",
-    "/product.html",
-    "/cart.html",
-    "/checkout.html",
-    "/login.html",
-    "/signup.html",
-    "/styles/main.css",
-    "/assets/data/products.json",
-    "/scripts/store.js",
-    "/scripts/app.js",
-    "/scripts/product.js",
-    "/scripts/cart.js",
-    "/scripts/auth.js",
-    "/scripts/auth-ui.js",
-    "/scripts/auth-ui-lazy.js",
-    "/scripts/image-optimizer.js",
-    "/scripts/sw-register.js",
-    "/scripts/firebase-auth.js",
-    "/scripts/firebase-config.js"
+    "./",
+    "index.html",
+    "product.html",
+    "cart.html",
+    "checkout.html",
+    "login.html",
+    "signup.html",
+    "styles/main.css",
+    "assets/data/products.json",
+    "scripts/store.js",
+    "scripts/app.js",
+    "scripts/product.js",
+    "scripts/cart.js",
+    "scripts/checkout.js",
+    "scripts/auth.js",
+    "scripts/auth-ui.js",
+    "scripts/auth-ui-lazy.js",
+    "scripts/image-optimizer.js",
+    "scripts/sw-register.js",
+    "scripts/firebase-auth.js",
+    "scripts/firebase-config.js"
 ];
 
 const asRequestUrl = (path) => {
-    const origin = self.location.origin;
-    return new URL(path, origin).toString();
+    return new URL(path, self.registration.scope).toString();
+};
+
+const toScopeRelativePath = (pathname) => {
+    if (SCOPE_PATH === "/") {
+        return pathname;
+    }
+
+    if (!pathname.startsWith(SCOPE_PATH)) {
+        return pathname;
+    }
+
+    const scoped = pathname.slice(SCOPE_PATH.length);
+    return `/${scoped}`;
 };
 
 const shouldHandleAsStatic = (requestUrl) => {
-    const path = requestUrl.pathname;
+    const path = toScopeRelativePath(requestUrl.pathname);
 
     return (
         path.endsWith(".css") ||
@@ -65,7 +82,7 @@ const cleanupOldCaches = async () => {
     );
 };
 
-const networkFirst = async (request, cacheName) => {
+const networkFirst = async (request, cacheName, options = {}) => {
     const cache = await caches.open(cacheName);
 
     try {
@@ -77,7 +94,9 @@ const networkFirst = async (request, cacheName) => {
 
         return networkResponse;
     } catch (error) {
-        const cachedResponse = await cache.match(request);
+        const cachedResponse = await cache.match(request, {
+            ignoreSearch: options.ignoreSearch === true
+        });
         return cachedResponse || Response.error();
     }
 };
@@ -129,7 +148,7 @@ self.addEventListener("fetch", (event) => {
     const isSameOrigin = requestUrl.origin === self.location.origin;
 
     if (request.mode === "navigate") {
-        event.respondWith(networkFirst(request, STATIC_CACHE));
+        event.respondWith(networkFirst(request, STATIC_CACHE, { ignoreSearch: true }));
         return;
     }
 
