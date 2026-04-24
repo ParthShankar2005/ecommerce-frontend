@@ -6,113 +6,7 @@ const productSearch = document.getElementById("product-search");
 
 const PRODUCT_API_URL = "https://fakestoreapi.com/products?limit=8";
 const store = window.EcoCartStore;
-
-const FALLBACK_PRODUCTS = [
-    {
-        id: "local-1",
-        title: "Wireless Noise-Canceling Headphones",
-        price: 129.0,
-        description: "Studio-inspired over-ear headphones with adaptive noise control.",
-        category: "Electronics",
-        image: "https://picsum.photos/seed/ecocart-headphones-main/480/480",
-        images: [
-            "https://picsum.photos/seed/ecocart-headphones-main/900/900",
-            "https://picsum.photos/seed/ecocart-headphones-side/900/900",
-            "https://picsum.photos/seed/ecocart-headphones-lifestyle/900/900"
-        ]
-    },
-    {
-        id: "local-2",
-        title: "Smart Fitness Watch",
-        price: 89.0,
-        description: "Track workouts, sleep, and heart rate with a bright AMOLED display.",
-        category: "Electronics",
-        image: "https://picsum.photos/seed/ecocart-watch-main/480/480",
-        images: [
-            "https://picsum.photos/seed/ecocart-watch-main/900/900",
-            "https://picsum.photos/seed/ecocart-watch-angle/900/900",
-            "https://picsum.photos/seed/ecocart-watch-run/900/900"
-        ]
-    },
-    {
-        id: "local-3",
-        title: "Minimalist Travel Backpack",
-        price: 64.0,
-        description: "Weather-ready backpack with padded laptop sleeve and hidden pockets.",
-        category: "Travel",
-        image: "https://picsum.photos/seed/ecocart-backpack-main/480/480",
-        images: [
-            "https://picsum.photos/seed/ecocart-backpack-main/900/900",
-            "https://picsum.photos/seed/ecocart-backpack-open/900/900",
-            "https://picsum.photos/seed/ecocart-backpack-outdoor/900/900"
-        ]
-    },
-    {
-        id: "local-4",
-        title: "Portable Bluetooth Speaker",
-        price: 72.0,
-        description: "Compact speaker with rich bass, splash protection, and 14-hour battery.",
-        category: "Electronics",
-        image: "https://picsum.photos/seed/ecocart-speaker-main/480/480",
-        images: [
-            "https://picsum.photos/seed/ecocart-speaker-main/900/900",
-            "https://picsum.photos/seed/ecocart-speaker-buttons/900/900",
-            "https://picsum.photos/seed/ecocart-speaker-outdoor/900/900"
-        ]
-    },
-    {
-        id: "local-5",
-        title: "Ceramic Pour-Over Coffee Set",
-        price: 39.0,
-        description: "Elegant brewing set including dripper, server, and filter papers.",
-        category: "Home",
-        image: "https://picsum.photos/seed/ecocart-coffee-main/480/480",
-        images: [
-            "https://picsum.photos/seed/ecocart-coffee-main/900/900",
-            "https://picsum.photos/seed/ecocart-coffee-close/900/900",
-            "https://picsum.photos/seed/ecocart-coffee-brew/900/900"
-        ]
-    },
-    {
-        id: "local-6",
-        title: "Lightweight Running Shoes",
-        price: 95.0,
-        description: "Responsive cushioning and breathable knit upper for everyday runs.",
-        category: "Fashion",
-        image: "https://picsum.photos/seed/ecocart-shoes-main/480/480",
-        images: [
-            "https://picsum.photos/seed/ecocart-shoes-main/900/900",
-            "https://picsum.photos/seed/ecocart-shoes-side/900/900",
-            "https://picsum.photos/seed/ecocart-shoes-track/900/900"
-        ]
-    },
-    {
-        id: "local-7",
-        title: "Organic Cotton Hoodie",
-        price: 54.0,
-        description: "Relaxed-fit hoodie made from organic brushed cotton fleece.",
-        category: "Fashion",
-        image: "https://picsum.photos/seed/ecocart-hoodie-main/480/480",
-        images: [
-            "https://picsum.photos/seed/ecocart-hoodie-main/900/900",
-            "https://picsum.photos/seed/ecocart-hoodie-back/900/900",
-            "https://picsum.photos/seed/ecocart-hoodie-street/900/900"
-        ]
-    },
-    {
-        id: "local-8",
-        title: "Glass Desk Lamp",
-        price: 47.0,
-        description: "Space-saving lamp with warm glow and touch dimmer controls.",
-        category: "Home",
-        image: "https://picsum.photos/seed/ecocart-lamp-main/480/480",
-        images: [
-            "https://picsum.photos/seed/ecocart-lamp-main/900/900",
-            "https://picsum.photos/seed/ecocart-lamp-glass/900/900",
-            "https://picsum.photos/seed/ecocart-lamp-desk/900/900"
-        ]
-    }
-];
+const imageOptimizer = window.EcoImageOptimizer;
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -161,6 +55,33 @@ const setProductsStatus = (message, isError = false) => {
     productsStatus.classList.toggle("error", isError);
 };
 
+const applyProductCardImage = (imageNode, product) => {
+    const imageSrc = String(product?.image ?? "").trim();
+
+    if (!imageSrc || !imageNode) {
+        return;
+    }
+
+    if (imageOptimizer?.applyOptimizedImage) {
+        imageOptimizer.applyOptimizedImage(imageNode, {
+            src: imageSrc,
+            alt: product.title,
+            width: 480,
+            height: 480,
+            loading: "lazy",
+            sizes: "(max-width: 600px) 90vw, (max-width: 900px) 45vw, 23vw"
+        });
+        return;
+    }
+
+    imageNode.src = imageSrc;
+    imageNode.alt = product.title;
+    imageNode.loading = "lazy";
+    imageNode.decoding = "async";
+    imageNode.width = 480;
+    imageNode.height = 480;
+};
+
 const createProductCard = (product) => {
     const card = document.createElement("article");
     card.className = "product-card";
@@ -175,12 +96,7 @@ const createProductCard = (product) => {
     media.className = "product-media";
 
     const image = document.createElement("img");
-    image.src = product.image;
-    image.alt = product.title;
-    image.loading = "lazy";
-    image.decoding = "async";
-    image.width = 480;
-    image.height = 480;
+    applyProductCardImage(image, product);
     media.appendChild(image);
 
     const title = document.createElement("h3");
@@ -230,7 +146,7 @@ const renderProducts = (products, statusMessage, isError = false) => {
 };
 
 const getProductsFromApi = async () => {
-    const response = await fetch(PRODUCT_API_URL, { cache: "no-store" });
+    const response = await fetch(PRODUCT_API_URL);
 
     if (!response.ok) {
         throw new Error(`API request failed with status ${response.status}`);
@@ -249,7 +165,7 @@ const getProductsFromApi = async () => {
 };
 
 const getProductsFromLocalJson = async () => {
-    const response = await fetch("assets/data/products.json", { cache: "no-store" });
+    const response = await fetch("assets/data/products.json");
 
     if (!response.ok) {
         throw new Error(`Local JSON request failed with status ${response.status}`);
@@ -265,6 +181,11 @@ const getProductsFromLocalJson = async () => {
     }
 
     return products;
+};
+
+const getProductsFromCache = () => {
+    const cachedProducts = store?.readCatalogCache?.() ?? [];
+    return Array.isArray(cachedProducts) ? cachedProducts : [];
 };
 
 const applySearchFilter = () => {
@@ -303,10 +224,13 @@ const initializeProductGrid = async () => {
             allProducts = await getProductsFromLocalJson();
             renderProducts(allProducts, "Products loaded from local catalog.");
         } catch (localJsonError) {
-            allProducts = FALLBACK_PRODUCTS
-                .map((product, index) => normalizeProduct(product, index))
-                .filter(Boolean);
-            renderProducts(allProducts, "Using fallback products due to a loading issue.");
+            allProducts = getProductsFromCache();
+
+            if (allProducts.length) {
+                renderProducts(allProducts, "Loaded cached products due to a network issue.");
+            } else {
+                renderProducts([], "Unable to load products right now. Please try again.", true);
+            }
         }
     }
 

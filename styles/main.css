@@ -414,6 +414,12 @@ main {
     box-shadow: var(--shadow);
 }
 
+.products-section,
+.info-section {
+    content-visibility: auto;
+    contain-intrinsic-size: 720px;
+}
+
 .section-head {
     display: flex;
     flex-wrap: wrap;

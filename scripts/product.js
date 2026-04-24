@@ -26,118 +26,12 @@ const detailAddCart = document.getElementById("detail-add-cart");
 const detailFeedback = document.getElementById("detail-feedback");
 
 const store = window.EcoCartStore;
+const imageOptimizer = window.EcoImageOptimizer;
 const PRODUCT_API_ROOT = "https://fakestoreapi.com/products";
 const LOCAL_PRODUCTS_URL = "assets/data/products.json";
 
 const MIN_QTY = 1;
 const MAX_QTY = 10;
-
-const FALLBACK_PRODUCTS = [
-    {
-        id: "local-1",
-        title: "Wireless Noise-Canceling Headphones",
-        price: 129.0,
-        description: "Studio-inspired over-ear headphones with adaptive noise control.",
-        category: "Electronics",
-        image: "https://picsum.photos/seed/ecocart-headphones-main/480/480",
-        images: [
-            "https://picsum.photos/seed/ecocart-headphones-main/900/900",
-            "https://picsum.photos/seed/ecocart-headphones-side/900/900",
-            "https://picsum.photos/seed/ecocart-headphones-lifestyle/900/900"
-        ]
-    },
-    {
-        id: "local-2",
-        title: "Smart Fitness Watch",
-        price: 89.0,
-        description: "Track workouts, sleep, and heart rate with a bright AMOLED display.",
-        category: "Electronics",
-        image: "https://picsum.photos/seed/ecocart-watch-main/480/480",
-        images: [
-            "https://picsum.photos/seed/ecocart-watch-main/900/900",
-            "https://picsum.photos/seed/ecocart-watch-angle/900/900",
-            "https://picsum.photos/seed/ecocart-watch-run/900/900"
-        ]
-    },
-    {
-        id: "local-3",
-        title: "Minimalist Travel Backpack",
-        price: 64.0,
-        description: "Weather-ready backpack with padded laptop sleeve and hidden pockets.",
-        category: "Travel",
-        image: "https://picsum.photos/seed/ecocart-backpack-main/480/480",
-        images: [
-            "https://picsum.photos/seed/ecocart-backpack-main/900/900",
-            "https://picsum.photos/seed/ecocart-backpack-open/900/900",
-            "https://picsum.photos/seed/ecocart-backpack-outdoor/900/900"
-        ]
-    },
-    {
-        id: "local-4",
-        title: "Portable Bluetooth Speaker",
-        price: 72.0,
-        description: "Compact speaker with rich bass, splash protection, and 14-hour battery.",
-        category: "Electronics",
-        image: "https://picsum.photos/seed/ecocart-speaker-main/480/480",
-        images: [
-            "https://picsum.photos/seed/ecocart-speaker-main/900/900",
-            "https://picsum.photos/seed/ecocart-speaker-buttons/900/900",
-            "https://picsum.photos/seed/ecocart-speaker-outdoor/900/900"
-        ]
-    },
-    {
-        id: "local-5",
-        title: "Ceramic Pour-Over Coffee Set",
-        price: 39.0,
-        description: "Elegant brewing set including dripper, server, and filter papers.",
-        category: "Home",
-        image: "https://picsum.photos/seed/ecocart-coffee-main/480/480",
-        images: [
-            "https://picsum.photos/seed/ecocart-coffee-main/900/900",
-            "https://picsum.photos/seed/ecocart-coffee-close/900/900",
-            "https://picsum.photos/seed/ecocart-coffee-brew/900/900"
-        ]
-    },
-    {
-        id: "local-6",
-        title: "Lightweight Running Shoes",
-        price: 95.0,
-        description: "Responsive cushioning and breathable knit upper for everyday runs.",
-        category: "Fashion",
-        image: "https://picsum.photos/seed/ecocart-shoes-main/480/480",
-        images: [
-            "https://picsum.photos/seed/ecocart-shoes-main/900/900",
-            "https://picsum.photos/seed/ecocart-shoes-side/900/900",
-            "https://picsum.photos/seed/ecocart-shoes-track/900/900"
-        ]
-    },
-    {
-        id: "local-7",
-        title: "Organic Cotton Hoodie",
-        price: 54.0,
-        description: "Relaxed-fit hoodie made from organic brushed cotton fleece.",
-        category: "Fashion",
-        image: "https://picsum.photos/seed/ecocart-hoodie-main/480/480",
-        images: [
-            "https://picsum.photos/seed/ecocart-hoodie-main/900/900",
-            "https://picsum.photos/seed/ecocart-hoodie-back/900/900",
-            "https://picsum.photos/seed/ecocart-hoodie-street/900/900"
-        ]
-    },
-    {
-        id: "local-8",
-        title: "Glass Desk Lamp",
-        price: 47.0,
-        description: "Space-saving lamp with warm glow and touch dimmer controls.",
-        category: "Home",
-        image: "https://picsum.photos/seed/ecocart-lamp-main/480/480",
-        images: [
-            "https://picsum.photos/seed/ecocart-lamp-main/900/900",
-            "https://picsum.photos/seed/ecocart-lamp-glass/900/900",
-            "https://picsum.photos/seed/ecocart-lamp-desk/900/900"
-        ]
-    }
-];
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -438,12 +332,62 @@ const initializeVariationState = (product) => {
     updatePriceDisplay();
 };
 
+const applyMainImage = (imageUrl) => {
+    if (!detailMainImage) {
+        return;
+    }
+
+    if (imageOptimizer?.applyOptimizedImage) {
+        imageOptimizer.applyOptimizedImage(detailMainImage, {
+            src: imageUrl,
+            alt: currentProduct?.title ?? "Selected product",
+            width: 900,
+            height: 900,
+            loading: "eager",
+            sizes: "(max-width: 900px) 92vw, 48vw"
+        });
+        return;
+    }
+
+    detailMainImage.src = imageUrl;
+    detailMainImage.alt = currentProduct?.title ?? "Selected product";
+    detailMainImage.width = 900;
+    detailMainImage.height = 900;
+    detailMainImage.decoding = "async";
+    detailMainImage.loading = "eager";
+};
+
+const applyThumbImage = (imageNode, imageUrl) => {
+    if (!imageNode) {
+        return;
+    }
+
+    if (imageOptimizer?.applyOptimizedImage) {
+        imageOptimizer.applyOptimizedImage(imageNode, {
+            src: imageUrl,
+            alt: "",
+            width: 180,
+            height: 180,
+            loading: "lazy",
+            sizes: "(max-width: 600px) 28vw, 120px"
+        });
+        return;
+    }
+
+    imageNode.src = imageUrl;
+    imageNode.alt = "";
+    imageNode.loading = "lazy";
+    imageNode.decoding = "async";
+    imageNode.width = 180;
+    imageNode.height = 180;
+};
+
 const setActiveImage = (imageUrl, imageIndex) => {
     if (!detailMainImage || !detailThumbs) {
         return;
     }
 
-    detailMainImage.src = imageUrl;
+    applyMainImage(imageUrl);
     detailThumbs.querySelectorAll(".detail-thumb").forEach((thumb, index) => {
         thumb.classList.toggle("is-active", index === imageIndex);
     });
@@ -476,12 +420,7 @@ const renderGallery = (images) => {
         thumbButton.setAttribute("aria-label", `View product image ${index + 1}`);
 
         const thumbImage = document.createElement("img");
-        thumbImage.src = imageUrl;
-        thumbImage.alt = "";
-        thumbImage.loading = "lazy";
-        thumbImage.decoding = "async";
-        thumbImage.width = 180;
-        thumbImage.height = 180;
+        applyThumbImage(thumbImage, imageUrl);
 
         thumbButton.appendChild(thumbImage);
         fragment.appendChild(thumbButton);
@@ -652,8 +591,7 @@ const fetchProductFromApi = async (productId) => {
     }
 
     const response = await fetch(
-        `${PRODUCT_API_ROOT}/${encodeURIComponent(String(productId))}`,
-        { cache: "no-store" }
+        `${PRODUCT_API_ROOT}/${encodeURIComponent(String(productId))}`
     );
 
     if (!response.ok) {
@@ -665,7 +603,7 @@ const fetchProductFromApi = async (productId) => {
 };
 
 const fetchProductsFromLocalJson = async () => {
-    const response = await fetch(LOCAL_PRODUCTS_URL, { cache: "no-store" });
+    const response = await fetch(LOCAL_PRODUCTS_URL);
 
     if (!response.ok) {
         throw new Error(`Local JSON request failed with status ${response.status}`);
@@ -816,10 +754,8 @@ const loadProductDetails = async () => {
     }
 
     if (!product) {
-        const fallbackProducts = FALLBACK_PRODUCTS
-            .map((item, index) => normalizeProduct(item, index))
-            .filter(Boolean);
-        product = findById(fallbackProducts, productId);
+        const cachedProducts = store?.readCatalogCache?.() ?? [];
+        product = findById(cachedProducts, productId);
     }
 
     if (!product) {

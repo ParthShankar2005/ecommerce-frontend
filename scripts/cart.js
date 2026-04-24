@@ -13,6 +13,7 @@ const proceedCheckoutButton = document.getElementById("proceed-checkout");
 const cartFeedback = document.getElementById("cart-feedback");
 
 const store = window.EcoCartStore;
+const imageOptimizer = window.EcoImageOptimizer;
 const CART_STORAGE_KEY = "ecocart_cart";
 const CART_UPDATED_EVENT = "ecocart:cart-updated";
 const MAX_QTY = 99;
@@ -53,6 +54,33 @@ const buildOptionLabel = (item) => {
     return options.length ? options.join(" • ") : "Standard configuration";
 };
 
+const applyCartItemImage = (imageNode, item) => {
+    const imageSrc = String(item?.image ?? "").trim();
+
+    if (!imageSrc || !imageNode) {
+        return;
+    }
+
+    if (imageOptimizer?.applyOptimizedImage) {
+        imageOptimizer.applyOptimizedImage(imageNode, {
+            src: imageSrc,
+            alt: item.title,
+            width: 280,
+            height: 280,
+            loading: "lazy",
+            sizes: "88px"
+        });
+        return;
+    }
+
+    imageNode.src = imageSrc;
+    imageNode.alt = item.title;
+    imageNode.loading = "lazy";
+    imageNode.decoding = "async";
+    imageNode.width = 280;
+    imageNode.height = 280;
+};
+
 const createCartItemElement = (item) => {
     const lineTotal = item.price * item.quantity;
     const quantity = clampQuantity(item.quantity);
@@ -67,7 +95,7 @@ const createCartItemElement = (item) => {
 
     row.innerHTML = `
         <div class="cart-item-media">
-            <img src="${item.image}" alt="${item.title}" loading="lazy" decoding="async" width="280" height="280">
+            <img width="280" height="280">
         </div>
         <div class="cart-item-info">
             <h3>${item.title}</h3>
@@ -100,6 +128,9 @@ const createCartItemElement = (item) => {
             <button class="cart-remove" type="button" data-action="remove">Remove</button>
         </div>
     `;
+
+    const cartImage = row.querySelector(".cart-item-media img");
+    applyCartItemImage(cartImage, item);
 
     return row;
 };
