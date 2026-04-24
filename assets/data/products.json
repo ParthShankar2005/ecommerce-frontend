@@ -1,0 +1,50 @@
+[
+  {
+    "id": 201,
+    "title": "Matte Ceramic Coffee Mug",
+    "price": 24,
+    "image": "https://picsum.photos/seed/ecocart-mug/480/480"
+  },
+  {
+    "id": 202,
+    "title": "Compact Wireless Keyboard",
+    "price": 59,
+    "image": "https://picsum.photos/seed/ecocart-keyboard/480/480"
+  },
+  {
+    "id": 203,
+    "title": "Everyday Canvas Sneakers",
+    "price": 74,
+    "image": "https://picsum.photos/seed/ecocart-sneakers/480/480"
+  },
+  {
+    "id": 204,
+    "title": "Modern Table Lamp",
+    "price": 49,
+    "image": "https://picsum.photos/seed/ecocart-tablelamp/480/480"
+  },
+  {
+    "id": 205,
+    "title": "Smart Water Bottle",
+    "price": 36,
+    "image": "https://picsum.photos/seed/ecocart-bottle/480/480"
+  },
+  {
+    "id": 206,
+    "title": "Ultra-Soft Throw Blanket",
+    "price": 42,
+    "image": "https://picsum.photos/seed/ecocart-blanket/480/480"
+  },
+  {
+    "id": 207,
+    "title": "Portable SSD 1TB",
+    "price": 119,
+    "image": "https://picsum.photos/seed/ecocart-ssd/480/480"
+  },
+  {
+    "id": 208,
+    "title": "Foldable Travel Duffel",
+    "price": 66,
+    "image": "https://picsum.photos/seed/ecocart-duffel/480/480"
+  }
+]

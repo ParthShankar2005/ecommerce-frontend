@@ -78,9 +78,40 @@
             </div>
         </section>
 
-        <section class="products-preview" id="products">
-            <h2>Trending Products</h2>
-            <p>Explore handpicked deals across electronics, lifestyle, and fashion.</p>
+        <section class="products-section" id="products" aria-labelledby="products-heading">
+            <div class="section-head">
+                <h2 id="products-heading">Trending Products</h2>
+                <p>Explore handpicked deals across electronics, lifestyle, and fashion.</p>
+            </div>
+
+            <div class="product-grid" id="product-grid" aria-live="polite">
+                <article class="product-card skeleton" aria-hidden="true">
+                    <div class="skeleton-thumb"></div>
+                    <div class="skeleton-line long"></div>
+                    <div class="skeleton-line short"></div>
+                    <div class="skeleton-line button"></div>
+                </article>
+                <article class="product-card skeleton" aria-hidden="true">
+                    <div class="skeleton-thumb"></div>
+                    <div class="skeleton-line long"></div>
+                    <div class="skeleton-line short"></div>
+                    <div class="skeleton-line button"></div>
+                </article>
+                <article class="product-card skeleton" aria-hidden="true">
+                    <div class="skeleton-thumb"></div>
+                    <div class="skeleton-line long"></div>
+                    <div class="skeleton-line short"></div>
+                    <div class="skeleton-line button"></div>
+                </article>
+                <article class="product-card skeleton" aria-hidden="true">
+                    <div class="skeleton-thumb"></div>
+                    <div class="skeleton-line long"></div>
+                    <div class="skeleton-line short"></div>
+                    <div class="skeleton-line button"></div>
+                </article>
+            </div>
+
+            <p class="products-status" id="products-status" role="status">Loading products...</p>
         </section>
 
         <section class="info-section" id="about">
